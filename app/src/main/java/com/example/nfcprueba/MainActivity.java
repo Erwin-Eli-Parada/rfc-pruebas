@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                     }else{
                         //Aqui puedes meter el metodo para buscar en tu base de datos usando nfc_id
                         Toast.makeText(context, "Se ha ejecutado con exito", Toast.LENGTH_LONG).show();
-
+                        id_message.setText(nfc_id);
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -77,20 +77,36 @@ public class MainActivity extends AppCompatActivity {
         if(NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)
             || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
             || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)){
-            //Aqui obtenemos el id tambien puedes obtener los datos con EXTRA_NDEF_MESSAGES
-            Parcelable[] rawId = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_ID);
+
+            /*Parcelable[] rawId = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_ID);
             NdefMessage[] id=null;
             if(rawId != null){
                 id= new NdefMessage[rawId.length];
                 for (int i=0; i< rawId.length; i++){
                     id[i]= (NdefMessage) rawId[i];
                 }
-            }
-            buildTagViwes(msgs);
+            }*/
+
+            //Aqui obtenemos el id tambien puedes obtener los datos con EXTRA_NDEF_MESSAGES
+            ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
         }
     }
 
     //metodo para decodificar el id y convertirlo en String
-    
+    private void ByteArrayToHexString(byte [] inarray) { //converts byte arrays to string
+        int i, j, in;
+        String [] hex = {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"};
+        String out= "";
+
+        for(j = 0 ; j < inarray.length ; ++j)
+        {
+            in = (int) inarray[j] & 0xff;
+            i = (in >> 4) & 0x0f;
+            out += hex[i];
+            i = in & 0x0f;
+            out += hex[i];
+        }
+        nfc_id=out;
+    }
 
 }
